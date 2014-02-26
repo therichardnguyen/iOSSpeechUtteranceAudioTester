@@ -9,22 +9,9 @@
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
 
-@interface FITCardioAudioFeedback : NSObject <AVSpeechSynthesizerDelegate>
-
-- (void) sayActivityDidStart;
-
-- (void) sayActivityDidStop;
-
-- (void) sayActivityDidPause;
-
-- (void) sayActivityDidResume;
-
-- (void) sayCurrentDistance: (double) distance unit:(NSString *) unit;
-
-- (void) sayCurrentTime: (NSUInteger) duration;
-
-- (void) sayAveragePace: (double) pace unit: (NSString *) unit;
+@interface AudioFeedback : NSObject <AVSpeechSynthesizerDelegate>
 
 - (void) sayString: (NSString *) string cancelPrevious: (BOOL) cancelPrevious;
 
+- (void) stopSession;
 @end

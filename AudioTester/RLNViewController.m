@@ -7,9 +7,9 @@
 //
 
 #import "RLNViewController.h"
-
+#import "AudioFeedback.h"
 @interface RLNViewController ()
-
+@property (strong, nonatomic) AudioFeedback *af;
 @end
 
 @implementation RLNViewController
@@ -17,6 +17,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.af = [[AudioFeedback alloc] init];
 	// Do any additional setup after loading the view, typically from a nib.
 }
 
@@ -24,6 +25,17 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+- (IBAction)sayOneThing:(id)sender {
+    [self.af sayString:@"One thing" cancelPrevious:YES];
+}
+
+- (IBAction)sayAnotherThing:(id)sender {
+    [self.af sayString:@"Another thing" cancelPrevious:YES];
+
+}
+- (IBAction)stopSession:(id)sender {
+    [self.af stopSession];
 }
 
 @end

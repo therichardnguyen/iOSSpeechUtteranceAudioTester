@@ -6,16 +6,15 @@
 //  Copyright (c) 2014 ahsieh. All rights reserved.
 //
 
-#import "FITCardioAudioFeedback.h"
-#import "FITConverter.h"
+#import "AudioFeedback.h"
 
-@interface FITCardioAudioFeedback ()
+@interface AudioFeedback ()
 @property (strong, nonatomic) AVAudioSession *session;
 @property (strong, nonatomic) AVSpeechSynthesizer *voice;
 @property (strong, nonatomic) AVSpeechUtterance *finalUtterance;
 @end
 
-@implementation FITCardioAudioFeedback
+@implementation AudioFeedback
 
 - (instancetype)init
 {
@@ -33,12 +32,15 @@
 
 - (void)dealloc
 {
-    [self setAudioSession:NO error:nil];
+    [self.session setActive:NO error:nil];
 }
 
-- (BOOL) setAudioSession: (BOOL) enabled error: (NSError **)error
+- (AVSpeechSynthesizer *)voice
 {
-    return [self.session setActive:enabled error:error];
+    if (!_voice) {
+        _voice = [[AVSpeechSynthesizer alloc] init];
+    }
+    return _voice;
 }
 
 - (AVSpeechUtterance *) utteranceWithString: (NSString *) string
@@ -50,107 +52,37 @@
     return utterance;
 }
 
-- (void) sayActivityDidStart
-{
-    NSArray *startStrings = @[@"Move bitch!",
-                              @"Hell, it's about time",
-                              @"Run, Forest, run!",
-                              @"Let's see what you can do"];
-    [self sayString:[NSString stringWithFormat:@"Activity started. %@", startStrings[(rand() % startStrings.count)]] cancelPrevious:YES];
-}
-
-- (void) sayActivityDidStop
-{
-    NSArray *stopString = @[@"That was absolutely pathetic",
-                            @"Was that it?",
-                            @"I've had better...",
-                            @"Was that a run or a warm up?",
-                            @"Oh man, that was embarrassing"];
-    [self sayString:[NSString stringWithFormat:@"Activity stopped. %@", stopString[rand() % stopString.count]] cancelPrevious:YES];
-}
-
-- (void) sayActivityDidPause
-{
-    NSArray *pauseStrings = @[@"Taking a break? You would.",
-                              @"Tired? You pussy."];
-    [self sayString:[NSString stringWithFormat:@"Activity paused. %@",pauseStrings[rand() % pauseStrings.count]] cancelPrevious:YES];
-}
-
-- (void) sayActivityDidResume
-{
-    NSArray *resumeString = @[@"Keep moving bitch!",
-                              @"I thought we'd never start again",
-                              @"Thank god, I thought you were dead"];
-    [self sayString:[NSString stringWithFormat:@"Activity resumed. %@", resumeString[rand() % resumeString.count]] cancelPrevious:YES];
-}
-
-- (void) sayCurrentDistance: (double) distance unit:(NSString *) unit
-{
-    double decimalPart = fmod(distance, 1);
-    if (decimalPart*100 < 1) { // If we have x.00
-        [self sayString:[NSString stringWithFormat:@"Current distance %.0f %@", distance, unit] cancelPrevious:NO];
-    } else {
-        [self sayString:[NSString stringWithFormat:@"Current distance %.2f %@", distance, unit] cancelPrevious:NO];
-    }
-}
-
-- (void) sayAveragePace: (double) pace unit: (NSString *) unit
-{
-    double paceMinutes = floor(pace);
-    double paceSeconds = 60 * (pace - paceMinutes);
-    [self sayString:[NSString stringWithFormat:@"Average pace %d minutes %d seconds %@", (int)paceMinutes, (int)paceSeconds, unit] cancelPrevious:NO];
-}
-
-- (void) sayCurrentTime: (NSUInteger) duration
-{
-    NSUInteger hours = duration / 3600;
-    NSUInteger minutes = (duration - (hours * 3600))/ 60;
-    NSUInteger seconds = duration % 60;
-    
-    NSMutableString *timeString = [NSMutableString stringWithString:@"Current time"];
-    BOOL noTime = YES;
-    if (hours != 0) {
-        [timeString appendFormat:@"%lu %@", hours, hours == 1 ? @"hour" : @"hours"];
-        noTime &= NO;
-    }
-    if (minutes != 0) {
-        [timeString appendFormat:@"%lu %@", minutes, minutes == 1 ? @"minute" : @"minutes"];
-        noTime &= NO;
-    }
-    if (seconds != 0) {
-        [timeString appendFormat:@"%lu %@", seconds, seconds == 1 ? @"second" : @"seconds"];
-        noTime &= NO;
-    }
-    if (noTime) {
-        [timeString appendString:@"Nothing"];
-    }
-    [self sayString:timeString cancelPrevious:NO];
-}
-
 - (void) sayString: (NSString *) string cancelPrevious: (BOOL) cancelPrevious
 {
     if (cancelPrevious) {
-        if (!self.voice.speaking) {
-            NSError *error;
-            if ([self setAudioSession:YES error:&error]) {
-                NSLog(@"Successfully started audio session");
-            }
-            else {
-                NSLog(@"Failed to start audio session %@", error);
-            }
+        NSError *error;
+        if ([self.session setActive:YES error:&error]) {
+            NSLog(@"Successfully started audio session");
+        }
+        else {
+            NSLog(@"Failed to start audio session %@", error);
         }
         AVSpeechSynthesizer *oldSynthesizer = self.voice;
         self.voice = nil;
         [oldSynthesizer stopSpeakingAtBoundary:AVSpeechBoundaryWord];
-        self.voice = [[AVSpeechSynthesizer alloc] init];
         self.voice.delegate = self;
     }
     
     // Keep track of the final utterance, we'll use this to determine whether or not we should stop the audio session
     self.finalUtterance = [self utteranceWithString:string];
     [self.voice speakUtterance:self.finalUtterance];
+    
+    
+}
 
-
+- (void) stopSession
+{
+    NSError *error;
+    if ([self.session setActive:NO error:&error]) {
+        NSLog(@"Stopped the audio session");
+    } else {
+        NSLog(@"ERROR failed to stop the audio session: %@. ", error);
+    }
 }
 
 #pragma mark - AVSpeechSynthesizerDelegate
@@ -159,9 +91,9 @@
 {
     NSError *error;
     // Only stop the audio session if this is the last created voice synthesizer and the last utterance for that voice synthesizer
-
-    if (synthesizer == self.voice  && self.finalUtterance == utterance) {
-        if ([self setAudioSession:NO error:&error]) {
+    if (synthesizer == self.voice && utterance == self.finalUtterance) {
+        
+        if ([self.session setActive:NO error:&error]) {
             NSLog(@"Stopped the audio session: Speech synthesizer still speaking (%d), paused (%d)", synthesizer.speaking,synthesizer.paused);
         } else {
             NSLog(@"ERROR failed to stop the audio session: %@. Speech synthesizer still speaking (%d), paused (%d)", error, synthesizer.speaking, synthesizer.paused);
@@ -174,7 +106,7 @@
     NSLog(@"Utterance (%@) did cancel", utterance.speechString);
     NSError *error;
     if (synthesizer == self.voice) {
-        if ([self setAudioSession:NO error:&error]) {
+        if ([self.session setActive:NO error:&error]) {
             NSLog(@"Stopped the audio session: Speech synthesizer still speaking %d", synthesizer.speaking);
         } else {
             NSLog(@"ERROR failed to stop the audio session: %@. Speech synthesizer still speaking %d", error, synthesizer.speaking);

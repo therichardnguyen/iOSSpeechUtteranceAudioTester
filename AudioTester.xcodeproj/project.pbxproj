@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		682B16DD18BDE64100E10982 /* AudioFeedback.m in Sources */ = {isa = PBXBuildFile; fileRef = 682B16DC18BDE64100E10982 /* AudioFeedback.m */; };
 		68CF9E7B18B55554002EB33C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68CF9E7A18B55554002EB33C /* Foundation.framework */; };
 		68CF9E7D18B55554002EB33C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68CF9E7C18B55554002EB33C /* CoreGraphics.framework */; };
 		68CF9E7F18B55554002EB33C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68CF9E7E18B55554002EB33C /* UIKit.framework */; };
@@ -34,6 +35,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		682B16DB18BDE64100E10982 /* AudioFeedback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioFeedback.h; sourceTree = "<group>"; };
+		682B16DC18BDE64100E10982 /* AudioFeedback.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioFeedback.m; sourceTree = "<group>"; };
 		68CF9E7718B55554002EB33C /* AudioTester.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AudioTester.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		68CF9E7A18B55554002EB33C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		68CF9E7C18B55554002EB33C /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -114,6 +117,8 @@
 			children = (
 				68CF9E8918B55554002EB33C /* RLNAppDelegate.h */,
 				68CF9E8A18B55554002EB33C /* RLNAppDelegate.m */,
+				682B16DB18BDE64100E10982 /* AudioFeedback.h */,
+				682B16DC18BDE64100E10982 /* AudioFeedback.m */,
 				68CF9E8C18B55554002EB33C /* Main.storyboard */,
 				68CF9E8F18B55554002EB33C /* RLNViewController.h */,
 				68CF9E9018B55554002EB33C /* RLNViewController.m */,
@@ -251,6 +256,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				68CF9E9118B55554002EB33C /* RLNViewController.m in Sources */,
+				682B16DD18BDE64100E10982 /* AudioFeedback.m in Sources */,
 				68CF9E8718B55554002EB33C /* main.m in Sources */,
 				68CF9E8B18B55554002EB33C /* RLNAppDelegate.m in Sources */,
 			);
@@ -380,6 +386,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "AudioTester/AudioTester-Prefix.pch";
 				INFOPLIST_FILE = "AudioTester/AudioTester-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -393,6 +400,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "AudioTester/AudioTester-Prefix.pch";
 				INFOPLIST_FILE = "AudioTester/AudioTester-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -457,6 +465,7 @@
 				68CF9EAB18B55555002EB33C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		68CF9EAC18B55555002EB33C /* Build configuration list for PBXNativeTarget "AudioTesterTests" */ = {
 			isa = XCConfigurationList;
@@ -465,6 +474,7 @@
 				68CF9EAE18B55555002EB33C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
